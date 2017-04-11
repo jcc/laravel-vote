@@ -26,7 +26,7 @@ trait VoteTrait
     {
         $item = $this->checkVoteItem($item);
 
-        return $this->votings($this->voteRelation)->sync((array)$item, false);
+        return $this->votedItems($this->voteRelation)->sync((array)$item, false);
     }
 
     /**
@@ -40,31 +40,31 @@ trait VoteTrait
     {
         $item = $this->checkVoteItem($item);
 
-        return $this->votings($this->voteRelation)->detach((array)$item);
+        return $this->votedItems($this->voteRelation)->detach((array)$item);
     }
 
     /**
-     * Check if user is voting given item.
+     * Check if user has voted item.
      *
      * @param $item
      *
      * @return bool
      */
-    public function isVoting($item)
+    public function hasVoted($item)
     {
         $item = $this->checkVoteItem($item);
 
-        return $this->votings($this->voteRelation)->get()->contains($item);
+        return $this->votedItems($this->voteRelation)->get()->contains($item);
     }
 
     /**
-     * Return item votings.
+     * Return the user what has items.
      *
      * @param class $class
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function votings($class = __CLASS__)
+    public function votedItems($class = __CLASS__)
     {
         return $this->morphedByMany($this->voteRelation, 'votable', 'votes')->withTimestamps();
     }

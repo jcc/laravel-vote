@@ -66,17 +66,17 @@ $post = Post::find(1);
 $user->downVote($post);
 ```
 
-#### Get user votings
+#### Get user has voted items
 
 ```php
-$user->votings();
+$user->votedItems();
 ```
 
 #### Check if voting
 ```
 $post = Post::find(1);
 
-$user->isVoting($post);
+$user->hasVoted($post);
 ```
 
 ### For Post model
