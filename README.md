@@ -50,7 +50,7 @@ class Post extends Model
 
 ### For User model
 
-#### Vote a post or posts.
+#### Up vote a post or posts.
 
 ```php
 $post = Post::find(1);
@@ -58,7 +58,7 @@ $post = Post::find(1);
 $user->upVote($post);
 ```
 
-#### Unvote a post or posts.
+#### Down vote a post or posts.
 
 ```php
 $post = Post::find(1);
@@ -72,9 +72,11 @@ $user->downVote($post);
 $user->votings();
 ```
 
-#### Check if vote
+#### Check if voting
 ```
-$user->isVoting(1);
+$post = Post::find(1);
+
+$user->isVoting($post);
 ```
 
 ### For Post model
