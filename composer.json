@@ -1,0 +1,29 @@
+{
+    "name": "jcc/laravel-vote",
+    "description": "The package helps you to add user based vote system to your model",
+    "authors": [
+        {
+            "name": "jcc",
+            "email": "changejian@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.9"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~5.0"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Jcc\\LaravelVote\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Jcc\\LaravelVote\\Tests\\": "tests"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
