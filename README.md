@@ -27,22 +27,22 @@ $ php artisan vendor:publish --provider="Jcc\LaravelVote\VoteServiceProvider" --
 Finally, use VoteTrait in User model
 
 ```php
-use Jcc\LaravelVote\VoteTrait;
+use Jcc\LaravelVote\Vote;
 
 class User extends Model
 {
-    use VoteTrait;
+    use Vote;
 }
 ```
 
-Or use VoterTrait in Post model
+Or use CanBeVoted in Post model
 
 ```php
-use Jcc\LaravelVote\VoterTrait;
+use Jcc\LaravelVote\CanBeVoted;
 
 class Post extends Model
 {
-    use VoterTrait;
+    use CanBeVoted;
 }
 ```
 

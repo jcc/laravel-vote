@@ -11,7 +11,7 @@
 
 namespace Jcc\LaravelVote;
 
-trait VoterTrait
+trait CanBeVoted
 {
     /**
      * Check if user is voted by given user.

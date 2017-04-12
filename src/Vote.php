@@ -11,7 +11,7 @@
 
 namespace Jcc\LaravelVote;
 
-trait VoteTrait
+trait Vote
 {
     protected $voteRelation = __CLASS__;
 
