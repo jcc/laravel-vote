@@ -20,7 +20,7 @@ trait CanBeVoted
      *
      * @return bool
      */
-    public function isVotedBy($item)
+    public function isVotedBy($user)
     {
         return $this->voters->contains($user);
     }
