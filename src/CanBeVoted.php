@@ -34,6 +34,6 @@ trait CanBeVoted
     {
         $property = property_exists($this, 'vote') ? $this->vote : __CLASS__;
 
-        return $this->morphToMany($property, 'votable');
+        return $this->morphToMany($property, 'votable', 'votes');
     }
 }
