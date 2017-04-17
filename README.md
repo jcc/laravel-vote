@@ -58,12 +58,12 @@ $post = Post::find(1);
 $user->upVote($post);
 ```
 
-#### Down vote a post or posts.
+#### Cancel vote a post or posts.
 
 ```php
 $post = Post::find(1);
 
-$user->downVote($post);
+$user->cancelVote($post);
 ```
 
 #### Get user has voted items

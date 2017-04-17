@@ -30,13 +30,13 @@ trait Vote
     }
 
     /**
-     * Down vote a item or items.
+     * Cancel vote a item or items.
      *
      * @param int|array|\Illuminate\Database\Eloquent\Model $item
      *
      * @return int
      */
-    public function downVote($item)
+    public function cancelVote($item)
     {
         $item = $this->checkVoteItem($item);
 
