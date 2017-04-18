@@ -26,6 +26,42 @@ trait CanBeVoted
     }
 
     /**
+     * Count the number of up votes.
+     *
+     * @return int
+     */
+    public function countUpVoters()
+    {
+        return $this->countVoters('up_vote');
+    }
+
+    /**
+     * Count the number of down votes.
+     *
+     * @return int
+     */
+    public function countDownVoters()
+    {
+        return $this->countVoters('down_vote');
+    }
+
+    /**
+     * Count the number of voters.
+     *
+     * @param  string $type
+     *
+     * @return int
+     */
+    public function countVoters($type = null)
+    {
+        $voters = $this->voters();
+
+        if(!is_null($type)) $voters->wherePivot('type', $type);
+
+        return $voters->count();
+    }
+
+    /**
      * Return voters.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany

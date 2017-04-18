@@ -35,12 +35,12 @@ class User extends Model
 }
 ```
 
-Or use CanBeVoted in Post model
+Or use CanBeVoted in Comment model
 
 ```php
 use Jcc\LaravelVote\CanBeVoted;
 
-class Post extends Model
+class Comment extends Model
 {
     use CanBeVoted;
 }
@@ -50,20 +50,28 @@ class Post extends Model
 
 ### For User model
 
-#### Up vote a post or posts.
+#### Up vote a comment or comments.
 
 ```php
-$post = Post::find(1);
+$comment = Comment::find(1);
 
-$user->upVote($post);
+$user->upVote($comment);
 ```
 
-#### Cancel vote a post or posts.
+### Down vote a comment or comments.
 
 ```php
-$post = Post::find(1);
+$comment = Comment::find(1);
 
-$user->cancelVote($post);
+$user->downVote($comment);
+```
+
+#### Cancel vote a comment or comments.
+
+```php
+$comment = Comment::find(1);
+
+$user->cancelVote($comment);
 ```
 
 #### Get user has voted items
@@ -72,25 +80,60 @@ $user->cancelVote($post);
 $user->votedItems();
 ```
 
-#### Check if voting
+#### Check if user has up or down vote
+
 ```
-$post = Post::find(1);
+$comment = Comment::find(1);
 
-$user->hasVoted($post);
+$user->hasVoted($comment);
 ```
 
-### For Post model
+#### Check if user has up vote
 
-#### Get post voters
+```
+$comment = Comment::find(1);
+
+$user->hasUpVoted($comment);
+```
+
+#### Check if user has down vote
+
+```
+$comment = Comment::find(1);
+
+$user->hasDownVoted($comment);
+```
+
+### For Comment model
+
+#### Get comment voters
 
 ```php
-$post->voters();
+$comment->voters();
+```
+
+#### Count comment voters
+
+```php
+$comment->countVoters();
+```
+
+#### Count comment up voters
+
+```php
+$comment->countUpVoters();
+```
+
+#### Count comment down voters
+
+```php
+$comment->countDownVoters();
 ```
 
 #### Check if voted by
 
 ```php
-$post->isVotedBy(1);
+$comment->isVotedBy(1);
 ```
 
 ## Reference
