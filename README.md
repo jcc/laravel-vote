@@ -6,13 +6,13 @@
 
 ## Installation
 
-You can install the package using composer
+You can install the package using Composer:
 
 ```sh
 $ composer require jcc/laravel-vote -vvv
 ```
 
-Then add the service provider to `config/app.php`
+Then add the service provider to `config/app.php`:
 
 ```php
 Jcc\LaravelVote\VoteServiceProvider::class
@@ -24,7 +24,7 @@ Publish the migrations file:
 $ php artisan vendor:publish --provider="Jcc\LaravelVote\VoteServiceProvider" --tag="migrations"
 ```
 
-Finally, use VoteTrait in User model
+Finally, use VoteTrait in User model:
 
 ```php
 use Jcc\LaravelVote\Vote;
@@ -35,7 +35,7 @@ class User extends Model
 }
 ```
 
-Or use CanBeVoted in Comment model
+Or use CanBeVoted in Comment model:
 
 ```php
 use Jcc\LaravelVote\CanBeVoted;
@@ -50,7 +50,7 @@ class Comment extends Model
 
 ### For User model
 
-#### Up vote a comment or comments.
+#### Up vote a comment or comments
 
 ```php
 $comment = Comment::find(1);
@@ -58,7 +58,7 @@ $comment = Comment::find(1);
 $user->upVote($comment);
 ```
 
-### Down vote a comment or comments.
+### Down vote a comment or comments
 
 ```php
 $comment = Comment::find(1);
@@ -66,7 +66,7 @@ $comment = Comment::find(1);
 $user->downVote($comment);
 ```
 
-#### Cancel vote a comment or comments.
+#### Cancel vote a comment or comments
 
 ```php
 $comment = Comment::find(1);
