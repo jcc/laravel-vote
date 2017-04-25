@@ -54,7 +54,7 @@ trait Vote
     {
         $items = array_fill_keys((array) $this->checkVoteItem($item), ['type' => $type]);
 
-        return $this->votedItems($this->voteRelation)->sync($items, false);
+        return $this->votedItems()->sync($items, false);
     }
 
     /**
@@ -68,7 +68,7 @@ trait Vote
     {
         $item = $this->checkVoteItem($item);
 
-        return $this->votedItems($this->voteRelation)->detach((array)$item);
+        return $this->votedItems()->detach((array)$item);
     }
 
     /**
@@ -107,7 +107,7 @@ trait Vote
     {
         $item = $this->checkVoteItem($item);
 
-        $votedItems = $this->votedItems($this->voteRelation);
+        $votedItems = $this->votedItems();
 
         if(!is_null($type)) $votedItems->wherePivot('type', $type);
 
@@ -117,11 +117,9 @@ trait Vote
     /**
      * Return the user what has items.
      *
-     * @param class $class
-     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function votedItems($class = __CLASS__)
+    public function votedItems()
     {
         return $this->morphedByMany($this->voteRelation, 'votable', 'votes')->withTimestamps();
     }
