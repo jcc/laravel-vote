@@ -74,10 +74,10 @@ $comment = Comment::find(1);
 $user->cancelVote($comment);
 ```
 
-#### Get user has voted items
+#### Get user has voted comment items
 
 ```php
-$user->votedItems();
+$user->votedItems(Comment::class)->get();
 ```
 
 #### Check if user has up or down vote

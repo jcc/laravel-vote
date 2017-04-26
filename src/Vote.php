@@ -73,9 +73,9 @@ trait Vote
 
     /**
      * Determine whether the type of 'up_vote' item exist
-     * 
+     *
      * @param $item
-     * 
+     *
      * @return boolean
      */
     public function hasUpVoted($item)
@@ -85,9 +85,9 @@ trait Vote
 
     /**
      * Determine whether the type of 'down_vote' item exist
-     * 
+     *
      * @param $item
-     * 
+     *
      * @return boolean
      */
     public function hasDownVoted($item)
@@ -117,10 +117,14 @@ trait Vote
     /**
      * Return the user what has items.
      *
+     * @param string $class
+     *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function votedItems()
+    public function votedItems($class = __CLASS__)
     {
+        $this->setVoteRelation($class);
+
         return $this->morphedByMany($this->voteRelation, 'votable', 'votes')->withTimestamps();
     }
 
@@ -134,10 +138,20 @@ trait Vote
     protected function checkVoteItem($item)
     {
         if ($item instanceof \Illuminate\Database\Eloquent\Model) {
-            $this->voteRelation = get_class($item);
+            $this->setVoteRelation(get_class($item));
             return $item->id;
         };
 
         return $item;
+    }
+
+    /**
+     * Set the vote relation class.
+     *
+     * @param string $class
+     */
+    protected function setVoteRelation($class)
+    {
+        return $this->voteRelation = $class;
     }
 }
