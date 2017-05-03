@@ -121,9 +121,11 @@ trait Vote
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function votedItems($class = __CLASS__)
+    public function votedItems($class = null)
     {
-        $this->setVoteRelation($class);
+        if (!empty($class)) {
+            $this->setVoteRelation($class);
+        }
 
         return $this->morphedByMany($this->voteRelation, 'votable', 'votes')->withTimestamps();
     }
