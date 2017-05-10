@@ -43,6 +43,8 @@ use Jcc\LaravelVote\CanBeVoted;
 class Comment extends Model
 {
     use CanBeVoted;
+
+    protected $vote = User::class;
 }
 ```
 
