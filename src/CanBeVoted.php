@@ -24,6 +24,18 @@ trait CanBeVoted
     {
         return $this->voters->contains($user);
     }
+	
+    /**
+     * Return the total vote score
+     *
+     * @return int
+     */
+    public function countTotalVotes()
+    {
+		$downVote = $this->countVoters('down_vote');
+		$upVotes = $this->countVoters('up_vote');
+        return $upVotes - $downVote;
+    }
 
     /**
      * Count the number of up votes.
