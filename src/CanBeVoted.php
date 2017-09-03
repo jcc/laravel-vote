@@ -32,8 +32,8 @@ trait CanBeVoted
      */
     public function countTotalVotes()
     {
-		$downVote = $this->countVoters('down_vote');
-		$upVotes = $this->countVoters('up_vote');
+        $downVote = $this->countVoters('down_vote');
+        $upVotes = $this->countVoters('up_vote');
         return $upVotes - $downVote;
     }
 
