@@ -127,7 +127,7 @@ trait Vote
             $this->setVoteRelation($class);
         }
 
-        return $this->morphedByMany($this->voteRelation, 'votable', 'votes')->withTimestamps();
+        return $this->morphedByMany($this->voteRelation, 'votable', $this->vote_table ?: 'votes')->withTimestamps();
     }
 
     /**
