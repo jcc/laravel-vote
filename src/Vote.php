@@ -1,159 +1,99 @@
 <?php
 
-/*
- * This file is part of the jcc/laravel-vote.
- *
- * (c) jcc <changejian@gmail.com>
- *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
- */
-
 namespace Jcc\LaravelVote;
 
-trait Vote
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Facades\Auth;
+use Jcc\LaravelVote\Events\CancelVoted;
+use Jcc\LaravelVote\Events\DownVoted;
+use Jcc\LaravelVote\Events\UpVoted;
+
+class Vote extends Model
 {
-    protected $voteRelation = __CLASS__;
+	protected $guarded = [];
 
-    /**
-     * Up vote a item or items.
-     *
-     * @param int|array|\Illuminate\Database\Eloquent\Model $item
-     *
-     * @return boolean
-     */
-    public function upVote($item)
-    {
-        $this->cancelVote($item);
+	protected $dispatchesEvents = [
+		'upVoted'   => UpVoted::class,
+		'downVoted' => DownVoted::class,
+		'deleted'   => CancelVoted::class,
+	];
 
-        return $this->vote($item);
-    }
+	protected $observables = [
+		'upVoted', 'downVoted',
+	];
 
-    /**
-     * Down vote a item or items.
-     *
-     * @param int|array|\Illuminate\Database\Eloquent\Model $item
-     *
-     * @return boolean
-     */
-    public function downVote($item)
-    {
-        $this->cancelVote($item);
+	/**
+	 * @param array $attributes
+	 */
+	public function __construct(array $attributes = [])
+	{
+		$this->table = \config('vote.votes_table');
 
-        return $this->vote($item, 'down_vote');
-    }
+		parent::__construct($attributes);
+	}
 
-    /**
-     * Vote a item or items.
-     *
-     * @param  int|array|\Illuminate\Database\Eloquent\Model $item
-     * @param  string $type
-     * @return boolean
-     */
-    public function vote($item, $type = 'up_vote')
-    {
-        $items = array_fill_keys((array) $this->checkVoteItem($item), ['type' => $type]);
+	protected static function boot()
+	{
+		parent::boot();
 
-        return $this->votedItems()->sync($items, false);
-    }
+		self::creating(function (Vote $vote) {
+			$userForeignKey = \config('vote.user_foreign_key');
+			$vote->{$userForeignKey} = $vote->{$userForeignKey} ?: Auth::id();
+		});
 
-    /**
-     * Cancel vote a item or items.
-     *
-     * @param int|array|\Illuminate\Database\Eloquent\Model $item
-     *
-     * @return int
-     */
-    public function cancelVote($item)
-    {
-        $item = $this->checkVoteItem($item);
+		$eventCallback = function (Vote $vote) {
+			if ($vote->isUp()) {
+				$vote->fireModelEvent('upVoted', false);
+			}
+			if ($vote->isDown()) {
+				$vote->fireModelEvent('downVoted', false);
+			}
+		};
+		self::created($eventCallback);
+		self::updated($eventCallback);
+	}
 
-        return $this->votedItems()->detach((array)$item);
-    }
+	public function votable(): MorphTo
+	{
+		return $this->morphTo();
+	}
 
-    /**
-     * Determine whether the type of 'up_vote' item exist
-     *
-     * @param $item
-     *
-     * @return boolean
-     */
-    public function hasUpVoted($item)
-    {
-        return $this->hasVoted($item, 'up_vote');
-    }
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
+	public function user()
+	{
+		return $this->belongsTo(\config('auth.providers.users.model'), \config('vote.user_foreign_key'));
+	}
 
-    /**
-     * Determine whether the type of 'down_vote' item exist
-     *
-     * @param $item
-     *
-     * @return boolean
-     */
-    public function hasDownVoted($item)
-    {
-        return $this->hasVoted($item, 'down_vote');
-    }
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
+	public function voter()
+	{
+		return $this->user();
+	}
 
-    /**
-     * Check if user has voted item.
-     *
-     * @param $item
-     * @param string $type
-     *
-     * @return bool
-     */
-    public function hasVoted($item, $type = null)
-    {
-        $item = $this->checkVoteItem($item);
+	/**
+	 * @param \Illuminate\Database\Eloquent\Builder $query
+	 * @param string                                $type
+	 *
+	 * @return \Illuminate\Database\Eloquent\Builder
+	 */
+	public function scopeWithType(Builder $query, string $type)
+	{
+		return $query->where('votable_type', \app($type)->getMorphClass());
+	}
 
-        $votedItems = $this->votedItems();
+	public function isUp()
+	{
+		return $this->type === VoteItems::UP;
+	}
 
-        if(!is_null($type)) $votedItems->wherePivot('type', $type);
-
-        return $votedItems->get()->contains($item);
-    }
-
-    /**
-     * Return the user what has items.
-     *
-     * @param string $class
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
-    public function votedItems($class = null)
-    {
-        if (!empty($class)) {
-            $this->setVoteRelation($class);
-        }
-
-        return $this->morphedByMany($this->voteRelation, 'votable', $this->vote_table ?: 'votes')->withTimestamps();
-    }
-
-    /**
-     * Determine whether $item is an instantiated object of \Illuminate\Database\Eloquent\Model
-     *
-     * @param $item
-     *
-     * @return int
-     */
-    protected function checkVoteItem($item)
-    {
-        if ($item instanceof \Illuminate\Database\Eloquent\Model) {
-            $this->setVoteRelation(get_class($item));
-            return $item->id;
-        };
-
-        return $item;
-    }
-
-    /**
-     * Set the vote relation class.
-     *
-     * @param string $class
-     */
-    protected function setVoteRelation($class)
-    {
-        return $this->voteRelation = $class;
-    }
+	public function isDown()
+	{
+		return $this->type === VoteItems::DOWN;
+	}
 }
