@@ -46,7 +46,7 @@ class FeatureTest extends TestCase
 
 		self::assertTrue($user->cancelVote($post));
 
-		$user->downVote($post);
+		$user->vote($post, VoteItems::DOWN);
 
 		Event::assertDispatched(Voted::class, function ($event) use ($user, $post) {
 			$vote = $event->vote;
@@ -78,13 +78,13 @@ class FeatureTest extends TestCase
 		$user1->cancelVote($post);
 		$user2->cancelVote($post);
 
-		self::assertFalse($user1->hasVote($post));
-		self::assertFalse($user1->hasDownVote($post));
-		self::assertFalse($user1->hasUpVote($post));
+		self::assertFalse($user1->hasVoted($post));
+		self::assertFalse($user1->hasDownVoted($post));
+		self::assertFalse($user1->hasUpVoted($post));
 
-		self::assertFalse($user1->hasVote($post));
-		self::assertFalse($user2->hasUpVote($post));
-		self::assertFalse($user2->hasDownVote($post));
+		self::assertFalse($user1->hasVoted($post));
+		self::assertFalse($user2->hasUpVoted($post));
+		self::assertFalse($user2->hasDownVoted($post));
 	}
 
 	public function test_upVoted_to_downVoted_each_other_features()
@@ -94,20 +94,20 @@ class FeatureTest extends TestCase
 		$post = Post::create(['title' => 'Hello world!']);
 
 		$user1->vote($post, VoteItems::UP);
-		self::assertTrue($user1->hasUpVote($post));
-		self::assertFalse($user1->hasDownVote($post));
+		self::assertTrue($user1->hasUpVoted($post));
+		self::assertFalse($user1->hasDownVoted($post));
 
 		$user1->vote($post, VoteItems::DOWN);
-		self::assertFalse($user1->hasUpVote($post));
-		self::assertTrue($user1->hasDownVote($post));
+		self::assertFalse($user1->hasUpVoted($post));
+		self::assertTrue($user1->hasDownVoted($post));
 
 		$user2->vote($post, VoteItems::DOWN);
-		self::assertFalse($user2->hasUpVote($post));
-		self::assertTrue($user2->hasDownVote($post));
+		self::assertFalse($user2->hasUpVoted($post));
+		self::assertTrue($user2->hasDownVoted($post));
 
 		$user2->vote($post, VoteItems::UP);
-		self::assertTrue($user2->hasUpVote($post));
-		self::assertFalse($user2->hasDownVote($post));
+		self::assertTrue($user2->hasUpVoted($post));
+		self::assertFalse($user2->hasDownVoted($post));
 	}
 
 	public function test_aggregations()
@@ -122,12 +122,12 @@ class FeatureTest extends TestCase
 		$book3 = Book::create(['title' => 'Learn yii2.']);
 
 		$user->vote($post1, VoteItems::UP);
-		$user->vote($post2, VoteItems::DOWN);
-		$user->downVote($post3);
+		$user->vote($post2, VoteItems::UP);
+		$user->vote($post3, VoteItems::DOWN);
 
 		$user->vote($book1, VoteItems::UP);
-		$user->vote($book2, VoteItems::DOWN);
-		$user->downVote($book3);
+		$user->vote($book2, VoteItems::UP);
+		$user->vote($book3, VoteItems::DOWN);
 
 		self::assertSame(6, $user->votes()->count());
 		self::assertSame(4, $user->votes()->withVoteType(VoteItems::UP)->count());
