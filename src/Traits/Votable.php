@@ -17,7 +17,7 @@ trait Votable
 	 *
 	 * @return bool
 	 */
-	public function isVoteBy(Model $user, ?string $type = null): bool
+	public function isVotedBy(Model $user, ?string $type = null): bool
 	{
 		if (\is_a($user, config('auth.providers.users.model'))) {
 			if ($this->relationLoaded('voters')) {
@@ -27,7 +27,7 @@ trait Votable
 			return $this->voters()
 				->where(\config('vote.user_foreign_key'), $user->getKey())
 				->when(is_string($type), function ($builder) use ($type) {
-					$builder->where('type', (string)new VoteItems($type));
+					$builder->where('vote_type', (string)new VoteItems($type));
 				})
 				->exists();
 		}
@@ -56,9 +56,9 @@ trait Votable
 	 *
 	 * @return bool
 	 */
-	public function isUpVoteBy(Model $user)
+	public function isUpVotedBy(Model $user)
 	{
-		return $this->isVoteBy($user, VoteItems::UP);
+		return $this->isVotedBy($user, VoteItems::UP);
 	}
 	
 	/**
@@ -68,7 +68,7 @@ trait Votable
 	 */
 	public function upVoters(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
 	{
-		return  $this->voters()->where('type', VoteItems::UP);
+		return  $this->voters()->where('vote_type', VoteItems::UP);
 	}
 
 	/**
@@ -76,9 +76,9 @@ trait Votable
 	 *
 	 * @return bool
 	 */
-	public function isDownVoteBy(Model $user)
+	public function isDownVotedBy(Model $user)
 	{
-		return $this->isVoteBy($user, VoteItems::DOWN);
+		return $this->isVotedBy($user, VoteItems::DOWN);
 	}
 
 	/**
@@ -88,6 +88,6 @@ trait Votable
 	 */
 	public function downVoters(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
 	{
-		return  $this->voters()->where('type', VoteItems::DOWN);
+		return  $this->voters()->where('vote_type', VoteItems::DOWN);
 	}
 }

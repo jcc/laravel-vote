@@ -2,26 +2,22 @@
 
 namespace Jcc\LaravelVote;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Auth;
 use Jcc\LaravelVote\Events\CancelVoted;
-use Jcc\LaravelVote\Events\DownVoted;
-use Jcc\LaravelVote\Events\UpVoted;
+use Jcc\LaravelVote\Events\Voted;
 
 class Vote extends Model
 {
 	protected $guarded = [];
 
 	protected $dispatchesEvents = [
-		'upVoted'   => UpVoted::class,
-		'downVoted' => DownVoted::class,
-		'deleted'   => CancelVoted::class,
-	];
+		'created'   => Voted::class,
+		'updated'   => Voted::class,
 
-	protected $observables = [
-		'upVoted', 'downVoted',
+		'deleted'   => CancelVoted::class,
 	];
 
 	/**
@@ -42,17 +38,6 @@ class Vote extends Model
 			$userForeignKey = \config('vote.user_foreign_key');
 			$vote->{$userForeignKey} = $vote->{$userForeignKey} ?: Auth::id();
 		});
-
-		$eventCallback = function (Vote $vote) {
-			if ($vote->isUp()) {
-				$vote->fireModelEvent('upVoted', false);
-			}
-			if ($vote->isDown()) {
-				$vote->fireModelEvent('downVoted', false);
-			}
-		};
-		self::created($eventCallback);
-		self::updated($eventCallback);
 	}
 
 	public function votable(): MorphTo
@@ -82,17 +67,28 @@ class Vote extends Model
 	 *
 	 * @return \Illuminate\Database\Eloquent\Builder
 	 */
-	public function scopeWithType(Builder $query, string $type)
+	public function scopeWithVotableType(Builder $query, string $type)
 	{
 		return $query->where('votable_type', \app($type)->getMorphClass());
 	}
 
-	public function isUp()
+	/**
+	 * @param \Illuminate\Database\Eloquent\Builder $query
+	 * @param string                                $type
+	 *
+	 * @return \Illuminate\Database\Eloquent\Builder
+	 */
+	public function scopeWithVoteType(Builder $query, string $type)
+	{
+		return $query->where('vote_type', (string)new VoteItems($type));
+	}
+
+	public function isUp(): bool
 	{
 		return $this->type === VoteItems::UP;
 	}
 
-	public function isDown()
+	public function isDown(): bool
 	{
 		return $this->type === VoteItems::DOWN;
 	}

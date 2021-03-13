@@ -2,7 +2,7 @@
 
 namespace Jcc\LaravelVote\Events;
 
-class UpVoted extends Event
+class Voted extends Event
 {
 
 }

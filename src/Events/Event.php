@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Event
 {
 	/**
-	 * @var \Illuminate\Database\Eloquent\Model
+	 * @var \Illuminate\Database\Eloquent\Model|
 	 */
 	public $vote;
 

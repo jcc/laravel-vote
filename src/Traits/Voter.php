@@ -20,7 +20,7 @@ trait Voter
 	 * @return \Jcc\LaravelVote\Vote
 	 * @throws \Jcc\LaravelVote\Exceptions\UnexpectValueException
 	 */
-	protected function vote(Model $object, string $type): Vote
+	public function vote(Model $object, string $type): Vote
 	{
 		$attributes = [
 			'votable_type' => $object->getMorphClass(),
@@ -43,11 +43,11 @@ trait Voter
 				}
 
 				return $vote->create(\array_merge($attributes, [
-					'type' => $type
+					'vote_type' => $type
 				]));
 			}
 		), function (Model $model) use ($type) {
-			$model->update(['type' => $type]);
+			$model->update(['vote_type' => $type]);
 		});
 	}
 
@@ -62,7 +62,7 @@ trait Voter
 				->where('votable_id', $object->getKey())
 				->where('votable_type', $object->getMorphClass())
 				->when(\is_string($type), function ($builder) use ($type) {
-					$builder->where('type', (string)new VoteItems($type));
+					$builder->where('vote_type', (string)new VoteItems($type));
 				})
 				->count() > 0;
 	}
@@ -111,7 +111,7 @@ trait Voter
 			'voters',
 			function ($builder) use ($type) {
 				return $builder->where(\config('vote.user_foreign_key'), $this->getKey())->when(\is_string($type), function ($builder) use ($type) {
-					$builder->where('type', (string)new VoteItems($type));
+					$builder->where('vote_type', (string)new VoteItems($type));
 				});
 			}
 		);
