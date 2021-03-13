@@ -183,7 +183,7 @@ class FeatureTest extends TestCase
 		self::assertEmpty($sqls->all());
 	}
 
-	public function test_object_likers_with_custom_morph_class_name()
+	public function test_object_votes_with_custom_morph_class_name()
 	{
 		$user1 = User::create(['name' => 'jcc']);
 		$user2 = User::create(['name' => 'allen']);
