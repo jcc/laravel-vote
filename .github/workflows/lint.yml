@@ -1,0 +1,24 @@
+name: Lint
+on: [ push, pull_request ]
+
+jobs:
+  lint:
+    name: PHP-${{ matrix.php_version }}-${{ matrix.perfer }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php_version:
+          - 7.4
+        perfer:
+          - stable
+    container:
+      image: nauxliu/php-ci-image:${{ matrix.php_version }}
+    steps:
+    - uses: actions/checkout@master
+    - name: Install Dependencies
+      run: composer install --prefer-dist --no-interaction --no-suggest
+    - name: Check Style
+      run: composer check-style
+    - name: PHPStan analyse
+      run: composer phpstan

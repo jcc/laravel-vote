@@ -21,8 +21,16 @@ class VoteServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__.'/../database/migrations/create_votes_table.php' => database_path('migrations/'.date('Y_m_d_His').'_create_votes_table.php'),
+            \dirname(__DIR__) . '/config/vote.php' => config_path('vote.php'),
+        ], 'config');
+
+        $this->publishes([
+            \dirname(__DIR__) . '/migrations/' => database_path('migrations'),
         ], 'migrations');
+
+        if ($this->app->runningInConsole()) {
+            $this->loadMigrationsFrom(\dirname(__DIR__) . '/migrations/');
+        }
     }
 
     /**
@@ -30,6 +38,9 @@ class VoteServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->mergeConfigFrom(
+            \dirname(__DIR__) . '/config/vote.php',
+            'vote'
+        );
     }
 }
