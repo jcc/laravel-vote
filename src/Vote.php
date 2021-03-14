@@ -11,85 +11,85 @@ use Jcc\LaravelVote\Events\Voted;
 
 class Vote extends Model
 {
-	protected $guarded = [];
+    protected $guarded = [];
 
-	protected $dispatchesEvents = [
-		'created' => Voted::class,
-		'updated' => Voted::class,
+    protected $dispatchesEvents = [
+        'created' => Voted::class,
+        'updated' => Voted::class,
 
-		'deleted' => CancelVoted::class,
-	];
+        'deleted' => CancelVoted::class,
+    ];
 
-	/**
-	 * @param array $attributes
-	 */
-	public function __construct(array $attributes = [])
-	{
-		$this->table = \config('vote.votes_table');
+    /**
+     * @param array $attributes
+     */
+    public function __construct(array $attributes = [])
+    {
+        $this->table = \config('vote.votes_table');
 
-		parent::__construct($attributes);
-	}
+        parent::__construct($attributes);
+    }
 
-	protected static function boot()
-	{
-		parent::boot();
+    protected static function boot()
+    {
+        parent::boot();
 
-		self::creating(function (Vote $vote) {
-			$userForeignKey = \config('vote.user_foreign_key');
-			$vote->{$userForeignKey} = $vote->{$userForeignKey} ?: Auth::id();
-		});
-	}
+        self::creating(function (Vote $vote) {
+            $userForeignKey = \config('vote.user_foreign_key');
+            $vote->{$userForeignKey} = $vote->{$userForeignKey} ?: Auth::id();
+        });
+    }
 
-	public function votable(): MorphTo
-	{
-		return $this->morphTo();
-	}
+    public function votable(): MorphTo
+    {
+        return $this->morphTo();
+    }
 
-	/**
-	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-	 */
-	public function user()
-	{
-		return $this->belongsTo(\config('auth.providers.users.model'), \config('vote.user_foreign_key'));
-	}
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function user()
+    {
+        return $this->belongsTo(\config('auth.providers.users.model'), \config('vote.user_foreign_key'));
+    }
 
-	/**
-	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-	 */
-	public function voter()
-	{
-		return $this->user();
-	}
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function voter()
+    {
+        return $this->user();
+    }
 
-	/**
-	 * @param \Illuminate\Database\Eloquent\Builder $query
-	 * @param string                                $type
-	 *
-	 * @return \Illuminate\Database\Eloquent\Builder
-	 */
-	public function scopeWithVotableType(Builder $query, string $type)
-	{
-		return $query->where('votable_type', \app($type)->getMorphClass());
-	}
+    /**
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string                                $type
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeWithVotableType(Builder $query, string $type)
+    {
+        return $query->where('votable_type', \app($type)->getMorphClass());
+    }
 
-	/**
-	 * @param \Illuminate\Database\Eloquent\Builder $query
-	 * @param string                                $type
-	 *
-	 * @return \Illuminate\Database\Eloquent\Builder
-	 */
-	public function scopeWithVoteType(Builder $query, string $type)
-	{
-		return $query->where('vote_type', (string)new VoteItems($type));
-	}
+    /**
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param string                                $type
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeWithVoteType(Builder $query, string $type)
+    {
+        return $query->where('vote_type', (string)new VoteItems($type));
+    }
 
-	public function isUp(): bool
-	{
-		return $this->type === VoteItems::UP;
-	}
+    public function isUp(): bool
+    {
+        return $this->type === VoteItems::UP;
+    }
 
-	public function isDown(): bool
-	{
-		return $this->type === VoteItems::DOWN;
-	}
+    public function isDown(): bool
+    {
+        return $this->type === VoteItems::DOWN;
+    }
 }
