@@ -19,14 +19,14 @@ trait Votable
      */
     public function isVotedBy(Model $user, ?string $type = null): bool
     {
-        if (\is_a($user, config('auth.providers.users.model'))) {
+        if (\is_a($user, \config('auth.providers.users.model'))) {
             if ($this->relationLoaded('voters')) {
                 return $this->voters->contains($user);
             }
 
             return $this->voters()
                 ->where(\config('vote.user_foreign_key'), $user->getKey())
-                ->when(is_string($type), function ($builder) use ($type) {
+                ->when(\is_string($type), function ($builder) use ($type) {
                     $builder->where('vote_type', (string)new VoteItems($type));
                 })
                 ->exists();
@@ -43,10 +43,10 @@ trait Votable
     public function voters(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
         return $this->belongsToMany(
-            config('auth.providers.users.model'),
-            config('vote.votes_table'),
+            \config('auth.providers.users.model'),
+            \config('vote.votes_table'),
             'votable_id',
-            config('vote.user_foreign_key')
+            \config('vote.user_foreign_key')
         )
             ->where('votable_type', $this->getMorphClass());
     }
