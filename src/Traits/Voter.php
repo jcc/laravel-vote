@@ -15,7 +15,7 @@ use Jcc\LaravelVote\VoteItems;
 trait Voter
 {
 	/**
-	 * @param Model $object
+	 * @param Model  $object
 	 * @param string $type
 	 * @return \Jcc\LaravelVote\Vote
 	 * @throws \Jcc\LaravelVote\Exceptions\UnexpectValueException
@@ -23,8 +23,8 @@ trait Voter
 	public function vote(Model $object, string $type): Vote
 	{
 		$attributes = [
-			'votable_type' => $object->getMorphClass(),
-			'votable_id' => $object->getKey(),
+			'votable_type'                   => $object->getMorphClass(),
+			'votable_id'                     => $object->getKey(),
 			\config('vote.user_foreign_key') => $this->getKey(),
 		];
 
@@ -43,7 +43,7 @@ trait Voter
 				}
 
 				return $vote->create(\array_merge($attributes, [
-					'vote_type' => $type
+					'vote_type' => $type,
 				]));
 			}
 		), function (Model $model) use ($type) {
@@ -52,7 +52,7 @@ trait Voter
 	}
 
 	/**
-	 * @param  \Illuminate\Database\Eloquent\Model  $object
+	 * @param \Illuminate\Database\Eloquent\Model $object
 	 *
 	 * @return bool
 	 */
@@ -110,9 +110,10 @@ trait Voter
 		return \app($model)->whereHas(
 			'voters',
 			function ($builder) use ($type) {
-				return $builder->where(\config('vote.user_foreign_key'), $this->getKey())->when(\is_string($type), function ($builder) use ($type) {
-					$builder->where('vote_type', (string)new VoteItems($type));
-				});
+				return $builder->where(\config('vote.user_foreign_key'), $this->getKey())->when(\is_string($type),
+					function ($builder) use ($type) {
+						$builder->where('vote_type', (string)new VoteItems($type));
+					});
 			}
 		);
 	}

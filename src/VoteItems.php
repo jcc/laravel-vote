@@ -26,7 +26,7 @@ final class VoteItems implements Stringable
 
 	public static function getValues()
 	{
-		return [ self::UP, self::DOWN ];
+		return [self::UP, self::DOWN];
 	}
 
 	public function __toString()

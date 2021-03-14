@@ -14,7 +14,8 @@
     },
     "require-dev": {
         "mockery/mockery": "^1.3",
-        "orchestra/testbench": "^3.5|~4.0|~5.0|~6.0"
+        "orchestra/testbench": "^3.5|~4.0|~5.0|~6.0",
+        "friendsofphp/php-cs-fixer": "^2.18"
     },
     "license": "MIT",
     "autoload": {
@@ -35,5 +36,10 @@
         }
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "scripts": {
+        "check-style": "php-cs-fixer fix --using-cache=no --diff --config=.php_cs --dry-run --ansi",
+        "fix-style": "php-cs-fixer fix --using-cache=no --config=.php_cs --ansi",
+        "test": "vendor/bin/phpunit --colors=always"
+    }
 }

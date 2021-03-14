@@ -14,10 +14,10 @@ class Vote extends Model
 	protected $guarded = [];
 
 	protected $dispatchesEvents = [
-		'created'   => Voted::class,
-		'updated'   => Voted::class,
+		'created' => Voted::class,
+		'updated' => Voted::class,
 
-		'deleted'   => CancelVoted::class,
+		'deleted' => CancelVoted::class,
 	];
 
 	/**

@@ -60,7 +60,7 @@ trait Votable
 	{
 		return $this->isVotedBy($user, VoteItems::UP);
 	}
-	
+
 	/**
 	 * Return up voters.
 	 *
@@ -68,7 +68,7 @@ trait Votable
 	 */
 	public function upVoters(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
 	{
-		return  $this->voters()->where('vote_type', VoteItems::UP);
+		return $this->voters()->where('vote_type', VoteItems::UP);
 	}
 
 	/**
@@ -88,6 +88,6 @@ trait Votable
 	 */
 	public function downVoters(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
 	{
-		return  $this->voters()->where('vote_type', VoteItems::DOWN);
+		return $this->voters()->where('vote_type', VoteItems::DOWN);
 	}
 }

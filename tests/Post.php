@@ -7,7 +7,7 @@ use Jcc\LaravelVote\Traits\Votable;
 
 class Post extends Model
 {
-	use Votable;
+    use Votable;
 
 	protected $fillable = ['title'];
 }

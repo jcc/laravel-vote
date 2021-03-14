@@ -30,6 +30,7 @@ class FeatureTest extends TestCase
 
 		Event::assertDispatched(Voted::class, function ($event) use ($user, $post) {
 			$vote = $event->vote;
+
 			return $vote->votable instanceof Post
 				&& $vote->user instanceof User
 				&& $vote->user->id === $user->id
@@ -50,6 +51,7 @@ class FeatureTest extends TestCase
 
 		Event::assertDispatched(Voted::class, function ($event) use ($user, $post) {
 			$vote = $event->vote;
+
 			return $vote->votable instanceof Post
 				&& $vote->user instanceof User
 				&& $vote->user->id === $user->id
