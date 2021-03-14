@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Jcc\LaravelVote\Events\Voted;
+use Jcc\LaravelVote\Exceptions\UnexpectValueException;
 use Jcc\LaravelVote\VoteItems;
 
 class FeatureTest extends TestCase
@@ -17,6 +18,17 @@ class FeatureTest extends TestCase
         Event::fake();
 
         config(['auth.providers.users.model' => User::class]);
+    }
+
+    public function test_voteItems()
+    {
+        self::assertEquals('up_vote', (string)(new VoteItems('up_vote')));
+        self::assertEquals('down_vote', (string)(new VoteItems('down_vote')));
+
+        $invalidValue = 'foobar';
+        $this->expectException(UnexpectValueException::class);
+        $this->expectDeprecationMessage("Unexpect Value: {$invalidValue}");
+        new VoteItems($invalidValue);
     }
 
     public function test_basic_features()
