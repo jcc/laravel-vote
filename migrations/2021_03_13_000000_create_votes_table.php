@@ -18,7 +18,6 @@ class CreateVotesTable extends Migration
 			$table->string('vote_type', 16)->default('up_vote'); // 'up_vote'/'down_vote'
 			$table->timestamps();
 		});
-
 	}
 
 	/**

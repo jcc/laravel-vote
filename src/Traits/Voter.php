@@ -110,10 +110,12 @@ trait Voter
 		return \app($model)->whereHas(
 			'voters',
 			function ($builder) use ($type) {
-				return $builder->where(\config('vote.user_foreign_key'), $this->getKey())->when(\is_string($type),
+				return $builder->where(\config('vote.user_foreign_key'), $this->getKey())->when(
+					\is_string($type),
 					function ($builder) use ($type) {
 						$builder->where('vote_type', (string)new VoteItems($type));
-					});
+					}
+				);
 			}
 		);
 	}

@@ -43,6 +43,6 @@ return PhpCsFixer\Config::create()
     ->setFinder(
         PhpCsFixer\Finder::create()
             ->exclude('vendor')
-            ->in([__DIR__.'/src/', __DIR__.'/tests/'])
+            ->in([__DIR__.'/src/', __DIR__.'/tests/', __DIR__.'/config/', __DIR__.'/migrations/'])
     )
 ;

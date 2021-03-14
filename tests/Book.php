@@ -9,5 +9,5 @@ class Book extends Model
 {
     use Votable;
 
-	protected $fillable = ['title'];
+    protected $fillable = ['title'];
 }
