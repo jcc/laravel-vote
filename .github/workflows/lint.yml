@@ -15,8 +15,10 @@ jobs:
     container:
       image: nauxliu/php-ci-image:${{ matrix.php_version }}
     steps:
-      - uses: actions/checkout@master
-      - name: Install Dependencies
-        run: composer install --prefer-dist --no-interaction --no-suggest
-      - name: Check Style
-        run: composer check-style
+    - uses: actions/checkout@master
+    - name: Install Dependencies
+      run: composer install --prefer-dist --no-interaction --no-suggest
+    - name: Check Style
+      run: composer check-style
+    - name: PHPStan analyse
+      run: composer phpstan

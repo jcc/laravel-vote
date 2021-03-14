@@ -9,6 +9,12 @@ use Illuminate\Support\Facades\Auth;
 use Jcc\LaravelVote\Events\CancelVoted;
 use Jcc\LaravelVote\Events\Voted;
 
+/**
+ * Class Vote
+ *
+ * @property string $vote_type
+ * @property string $votable_type
+ */
 class Vote extends Model
 {
     protected $guarded = [];
@@ -85,11 +91,11 @@ class Vote extends Model
 
     public function isUp(): bool
     {
-        return $this->type === VoteItems::UP;
+        return $this->vote_type === VoteItems::UP;
     }
 
     public function isDown(): bool
     {
-        return $this->type === VoteItems::DOWN;
+        return $this->vote_type === VoteItems::DOWN;
     }
 }

@@ -24,11 +24,17 @@ final class VoteItems implements Stringable
         $this->value = $value;
     }
 
-    public static function getValues()
+    /**
+     * @return string[]
+     */
+    public static function getValues(): array
     {
         return [self::UP, self::DOWN];
     }
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return $this->value;
