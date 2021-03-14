@@ -30,7 +30,8 @@ class FeatureTest extends TestCase
 
         Event::assertDispatched(Voted::class, function ($event) use ($user, $post) {
             $vote = $event->vote;
-
+            self::assertTrue($vote->isUp());
+            self::assertFalse($vote->isDown());
             return $vote->votable instanceof Post
                 && $vote->user instanceof User
                 && $vote->user->id === $user->id
@@ -47,11 +48,13 @@ class FeatureTest extends TestCase
 
         self::assertTrue($user->cancelVote($post));
 
-        $user->vote($post, VoteItems::DOWN);
+        Event::fake();
 
+        $user->vote($post, VoteItems::DOWN);
         Event::assertDispatched(Voted::class, function ($event) use ($user, $post) {
             $vote = $event->vote;
-
+            self::assertFalse($vote->isUp());
+            self::assertTrue($vote->isDown());
             return $vote->votable instanceof Post
                 && $vote->user instanceof User
                 && $vote->user->id === $user->id
@@ -65,6 +68,23 @@ class FeatureTest extends TestCase
         self::assertTrue($post->isVotedBy($user));
         self::assertFalse($post->isUpVotedBy($user));
         self::assertTrue($post->isDownVotedBy($user));
+
+        /** @var User $user */
+        $user = User::create(['name' => 'jcc']);
+        /** @var Post $post */
+        $post = Post::create(['title' => 'Hello world!']);
+        $user->vote($post, VoteItems::UP);
+        Event::fake();
+        $user->vote($post, VoteItems::DOWN);
+        Event::assertDispatched(Voted::class, function ($event) use ($user, $post) {
+            $vote = $event->vote;
+            self::assertFalse($vote->isUp());
+            self::assertTrue($vote->isDown());
+            return $vote->votable instanceof Post
+                && $vote->user instanceof User
+                && $vote->user->id === $user->id
+                && $vote->votable->id === $post->id;
+        });
     }
 
     public function test_cancelVote_features()
@@ -95,21 +115,24 @@ class FeatureTest extends TestCase
         $user2 = User::create(['name' => 'allen']);
         $post = Post::create(['title' => 'Hello world!']);
 
-        $user1->vote($post, VoteItems::UP);
+        $upModel = $user1->vote($post, VoteItems::UP);
         self::assertTrue($user1->hasUpVoted($post));
         self::assertFalse($user1->hasDownVoted($post));
 
-        $user1->vote($post, VoteItems::DOWN);
+        $downModel = $user1->vote($post, VoteItems::DOWN);
         self::assertFalse($user1->hasUpVoted($post));
         self::assertTrue($user1->hasDownVoted($post));
+        self::assertTrue($user1->hasDownVoted($post));
+        self::assertEquals($upModel->id, $downModel->id);
 
-        $user2->vote($post, VoteItems::DOWN);
+        $downModel = $user2->vote($post, VoteItems::DOWN);
         self::assertFalse($user2->hasUpVoted($post));
         self::assertTrue($user2->hasDownVoted($post));
 
-        $user2->vote($post, VoteItems::UP);
+        $upModel = $user2->vote($post, VoteItems::UP);
         self::assertTrue($user2->hasUpVoted($post));
         self::assertFalse($user2->hasDownVoted($post));
+        self::assertEquals($upModel->id, $downModel->id);
     }
 
     public function test_aggregations()
